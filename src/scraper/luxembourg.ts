@@ -19,6 +19,19 @@ options.setPreference('browser.download.folderList', 2);
 options.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/x-csv');
 
 export const isServiceAvailable = async (): Promise<boolean> => {
+    const driver = await new Builder()
+        .forBrowser('firefox')
+        .setFirefoxOptions(options)
+        .build();
+    await driver.get(startUrl);
+
+    try {
+        await driver.findElement(By.name('CSVButton'));
+    } catch (error) {
+        await driver.quit();
+        return false;
+    }
+
     return true;
 };
 
@@ -32,6 +45,7 @@ export const scrapeData = async (): Promise<boolean> => {
     try {
         await driver.findElement(By.name('CSVButton')).click();
     } catch (error) {
+        await driver.quit();
         return false;
     }
 
