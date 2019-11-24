@@ -28,7 +28,13 @@ export const scrapeData = async (): Promise<boolean> => {
         .setFirefoxOptions(options)
         .build();
     await driver.get(startUrl);
-    await driver.findElement(By.name('CSVButton')).click();
+
+    try {
+        await driver.findElement(By.name('CSVButton')).click();
+    } catch (error) {
+        return false;
+    }
+
     await driver.quit();
 
     return true;
