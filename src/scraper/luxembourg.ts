@@ -1,10 +1,15 @@
 import { Builder, By } from 'selenium-webdriver';
 import * as firefox from 'selenium-webdriver/firefox';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const country = 'Luxembourg';
 
 const startUrl =
     'https://statistiques.public.lu/stat/TableViewer/tableView.aspx?ReportId=13050&IF_Language=eng&MainTheme=3&FldrName=5&RFPath=48';
 
-const downloadDir = '/home/an4cr0n/Downloads/Selenium';
+const downloadDir = String(process.env.DATA_DOWNLOAD_DIR + '/' + country);
 
 const options = new firefox.Options();
 
@@ -28,5 +33,3 @@ export const scrapeData = async (): Promise<boolean> => {
 
     return true;
 };
-
-scrapeData();
