@@ -1,4 +1,15 @@
 import { Builder, By } from 'selenium-webdriver';
+import * as firefox from 'selenium-webdriver/firefox';
+
+const options = new firefox.Options();
+
+options.headless();
+options.setPreference('browser.download.dir', '/home/an4cr0n/Downloads/Selenium');
+options.setPreference('browser.download.folderList', 2);
+options.setPreference(
+    'browser.helperApps.neverAsk.saveToDisk',
+    'application/x-csv, text/plain, application/octet-stream, application/binary, text/csv, application/csv, application/excel, text/comma-separated-values, text/xml, application/xml',
+);
 
 const startUrl =
     'https://statistiques.public.lu/stat/TableViewer/tableView.aspx?ReportId=13050&IF_Language=eng&MainTheme=3&FldrName=5&RFPath=48';
@@ -8,13 +19,15 @@ export const isServiceAvailable = async (): Promise<boolean> => {
 };
 
 export const scrapeData = async (): Promise<boolean> => {
-    const driver = await new Builder().forBrowser('firefox').build();
+    const driver = await new Builder()
+        .forBrowser('firefox')
+        .setFirefoxOptions(options)
+        .build();
     await driver.get(startUrl);
     await driver.findElement(By.name('CSVButton')).click();
-    //await driver.findElement(By.name('q')).sendKeys('Selenium', Key.RETURN);
-    //await driver.quit();
+    await driver.quit();
 
     return true;
 };
 
-isServiceAvailable();
+scrapeData();
