@@ -1,4 +1,4 @@
-import { Builder, By } from 'selenium-webdriver';
+import { Builder, By, WebElement, WebDriver } from 'selenium-webdriver';
 import * as firefox from 'selenium-webdriver/firefox';
 import * as dotenv from 'dotenv';
 
@@ -18,38 +18,50 @@ options.setPreference('browser.download.dir', downloadDir);
 options.setPreference('browser.download.folderList', 2);
 options.setPreference('browser.helperApps.neverAsk.saveToDisk', 'application/x-csv');
 
-export const isServiceAvailable = async (): Promise<boolean> => {
-    const driver = await new Builder()
+const createWebDriver = async (): Promise<WebDriver> =>
+    await new Builder()
         .forBrowser('firefox')
         .setFirefoxOptions(options)
         .build();
+
+const getDownloadButton = async (
+    driver: WebDriver,
+): Promise<{ downloadButton: WebElement | null; success: boolean }> => {
     await driver.get(startUrl);
 
+    let downloadButton: WebElement | null = null;
+
+    let success = true;
+
     try {
-        await driver.findElement(By.name('CSVButton'));
+        downloadButton = await driver.findElement(By.name('CSVButtonx'));
     } catch (error) {
-        await driver.quit();
-        return false;
+        success = false;
     }
 
-    return true;
+    return { downloadButton, success };
+};
+
+export const isServiceAvailable = async (): Promise<boolean> => {
+    const driver = await createWebDriver();
+
+    const request = await getDownloadButton(driver);
+
+    await driver.quit();
+
+    return request.success;
 };
 
 export const scrapeData = async (): Promise<boolean> => {
-    const driver = await new Builder()
-        .forBrowser('firefox')
-        .setFirefoxOptions(options)
-        .build();
-    await driver.get(startUrl);
+    const driver = await createWebDriver();
 
-    try {
-        await driver.findElement(By.name('CSVButton')).click();
-    } catch (error) {
-        await driver.quit();
-        return false;
+    const { downloadButton, success } = await getDownloadButton(driver);
+
+    if (downloadButton !== null) {
+        await downloadButton.click();
     }
 
     await driver.quit();
 
-    return true;
+    return success;
 };
