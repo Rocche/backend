@@ -24,38 +24,34 @@ const createWebDriver = async (): Promise<WebDriver> =>
         .setFirefoxOptions(options)
         .build();
 
-const getDownloadButton = async (
-    driver: WebDriver,
-): Promise<{ downloadButton: WebElement | null; success: boolean }> => {
+const getDownloadButton = async (driver: WebDriver): Promise<WebElement | null> => {
     await driver.get(startUrl);
 
-    let downloadButton: WebElement | null = null;
-
-    let success = true;
+    let downloadButton: WebElement | null;
 
     try {
-        downloadButton = await driver.findElement(By.name('CSVButtonx'));
+        downloadButton = await driver.findElement(By.name('CSVButton'));
     } catch (error) {
-        success = false;
+        downloadButton = null;
     }
 
-    return { downloadButton, success };
+    return downloadButton;
 };
 
 export const isServiceAvailable = async (): Promise<boolean> => {
     const driver = await createWebDriver();
 
-    const request = await getDownloadButton(driver);
+    const downloadButton = await getDownloadButton(driver);
 
     await driver.quit();
 
-    return request.success;
+    return downloadButton !== null;
 };
 
 export const scrapeData = async (): Promise<boolean> => {
     const driver = await createWebDriver();
 
-    const { downloadButton, success } = await getDownloadButton(driver);
+    const downloadButton = await getDownloadButton(driver);
 
     if (downloadButton !== null) {
         await downloadButton.click();
@@ -63,5 +59,5 @@ export const scrapeData = async (): Promise<boolean> => {
 
     await driver.quit();
 
-    return success;
+    return downloadButton !== null;
 };
