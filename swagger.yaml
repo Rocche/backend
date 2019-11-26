@@ -1,16 +1,18 @@
 openapi: '3.0.2'
 info:
   title: PRAETOR API
-  version: '1.0'
+  version: '0.0.1'
   description: "APIs for PRAETOR project."
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 servers:
-  - url: 'http://localhost:3000/'
+  - url: 'http://localhost:5000/'
     description: PRAETOR server.
 
 
 components:
   schemas:
-  
     Endpoint:
       description: Model containing endpoint info.
       type: object
@@ -59,6 +61,17 @@ components:
 
     
 paths:
+  /scraper/{country}/status:
+    get:
+      description: Gets the status of the target country's scraper service
+      
+      responses:
+        200:
+          description: Scraping service works with high confidence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Endpoints'
   /endpoints:
     get:
       description: Gets the status of all countries' endpoints.
@@ -154,3 +167,7 @@ paths:
                 example: ['Luxembourg', 'Italy', 'France']
                 items:
                   type: string
+
+externalDocs:
+  description: "Project Repository"
+  url: "https://github.com/Praetor-unicam/backend"
