@@ -4,15 +4,13 @@ import luxembourg from './routes/scraper/luxembourg';
 
 import * as swaggerUi from 'swagger-ui-express';
 
-import * as YAML from 'yamljs';
+import { swaggerSpec } from './swaggerDef';
 
 import { getData } from './loader'; // getData will return luxembourg's data so far
 
-const swaggerDocument = YAML.load('swagger.yaml');
-
 const app = express();
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/', (request, response) => {
     response.send('Hello world!');
